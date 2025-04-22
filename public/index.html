@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ARENA FUTEBOL BR</title>
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #0077cc;
+            color: white;
+            padding: 1rem;
+        }
+
+        nav button {
+            background-color: #005fa3;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 0.5rem 0;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 1rem;
+        }
+
+        footer {
+            background-color: #f1f1f1;
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>ARENA FUTEBOL BR</h1>
+        <nav id="menu">
+            <button onclick="toggleMenu()">☰ Menu</button>
+            <ul id="menuItems" style="display: none;">
+                <li><a href="#resultados" onclick="carregarResultados()">Resultados</a></li>
+                <li><a href="#ranking" onclick="carregarRanking()">Ranking</a></li>
+                <li><a href="#palpites" onclick="carregarPalpites()">Palpites</a></li>
+                <li><a href="#videos" onclick="carregarVideos()">Vídeos</a></li>
+                <li><a href="#radios" onclick="carregarRadios()">Rádios</a></li>
+                <li><a href="#discord" onclick="carregarDiscord()">Discord</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div>
+            <a href="#" class="_link" data-league="39">Inglaterra - Premier League</a>
+            <a href="#" class="_link" data-league="61">França - Ligue 1</a>
+            <a href="#" class="_link" data-league="78">Alemanha - Bundesliga</a>
+        </div>
+
+        <div id="wg-api-football-standings" data-host="v3.football.api-sports.io" data-key="Your-Api-Key-Here"
+            data-league="39" data-season="2022" data-theme="" data-show-errors="false" data-show-logos="true"
+            class="wg_loader">
+        </div>
+
+        <section id="resultados">
+            <h2>Resultados Recentes</h2>
+            <button id="atualizarBtn">Atualizar Resultados de Hoje</button>
+            <div id="results">Clique para carregar resultados...</div>
+        </section>
+
+        <section id="ranking">
+            <h2>Ranking dos Esportes</h2>
+            <div id="rankingData">Clique para carregar ranking...</div>
+        </section>
+
+        <section id="palpites">
+            <h2>Palpites</h2>
+            <form id="palpiteForm" enctype="multipart/form-data">
+                <label for="nome">🧍 Nome:</label>
+                <input type="text" id="nome" name="nome" required>
+
+                <label for="palpite">🔮 Palpite:</label>
+                <input type="text" id="palpite" name="palpite" required>
+
+                <label for="foto">📸 Foto de Perfil:</label>
+                <input type="file" id="foto" name="foto" accept="image/*" required>
+
+                <button type="submit">🚀 Enviar Palpite</button>
+            </form>
+
+            <h3>🏆 Ranking dos Palpiteiros</h3>
+            <div id="rankingPalpites" class="ranking-palpite"></div>
+        </section>
+
+        <section id="videos">
+            <h2>Vídeos</h2>
+            <div id="videoContainer">Carregando vídeos...</div>
+        </section>
+
+        <section id="radios">
+            <h2>Rádios de Esportes</h2>
+            <div id="radioContainer">Clique para carregar rádios ao vivo</div>
+        </section>
+
+        <section id="discord">
+            <h2>Comunidade no Discord</h2>
+            <div id="discordData">Clique para carregar o link do servidor</div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Esportes Globais. Todos os direitos reservados.</p>
+    </footer>
+
+    <script type="module" src="https://widgets.api-sports.io/2.0.3/widgets.js"></script>
+
+    <script>
+        function toggleMenu()
+        {
+            const menuItems = document.getElementById("menuItems");
+            menuItems.style.display = menuItems.style.display === "none" ? "block" : "none";
+        }
+
+        document.addEventListener('click', function (event)
+        {
+            if (!event.target.matches('._link')) return;
+            event.preventDefault();
+
+            const id = event.target.getAttribute('data-league');
+            const standings = document.getElementById('wg-api-football-standings');
+
+            standings.innerHTML = '';
+            standings.setAttribute('data-league', id);
+
+            const newEvent = new Event("DOMContentLoaded", {
+                bubbles: true,
+                cancelable: true
+            });
+            document.dispatchEvent(newEvent);
+        }); 
+    </script>
+    <!-- Certifique-se que esse caminho está correto -->
+    <script src="js/resultados.js"></script>
+
+
+</body>
+
+</html>

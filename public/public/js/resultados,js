@@ -1,0 +1,23 @@
+// public/js/resultados.js
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("/resultados")  // agora funciona porque o servidor Node serve esse endpoint
+    .then(response => {
+      if (!response.ok) throw new Error("Erro na resposta do servidor");
+      return response.json();
+    })
+    .then(data => {
+      let resultadosHTML = "";
+
+      for (const jogo of data) {
+        resultadosHTML += `
+          <p>${jogo.equipe1} ${jogo.placar1} x ${jogo.placar2} ${jogo.equipe2}</p>
+        `;
+      }
+
+      document.getElementById("results").innerHTML = resultadosHTML;
+    })
+    .catch(error => {
+      console.error("Erro ao carregar resultados:", error);
+      document.getElementById("results").innerHTML = "<p>Erro ao carregar resultados.</p>";
+    });
+});
