@@ -1,0 +1,87 @@
+<!-- LOGIN.HTML -->
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Login - Arena Futebol BR</title>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+</head>
+
+<body>
+    <h1>👋 Bem-vindo à Arena Futebol BR</h1>
+
+    <form id="loginForm">
+        <input type="email" id="email" placeholder="Seu e-mail" required />
+        <input type="password" id="senha" placeholder="Senha" required />
+        <button type="submit">Entrar com E-mail</button>
+    </form>
+
+    <p>Ou</p>
+    <button onclick="loginComGoogle()">Entrar com Google</button>
+
+    <p>Não tem conta? <button onclick="cadastrar()">Cadastrar</button></p>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyA5DIAourmLOL3fq-clZZWNaXmiE5viaxQ",
+            authDomain: "arena-futebolbr.firebaseapp.com",
+            projectId: "arena-futebolbr",
+            appId: "1:929515695163:web:239d34041a9dc25d2bc01e"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        const auth = firebase.auth();
+
+        document.getElementById("loginForm").addEventListener("submit", async (e) =>
+        {
+            e.preventDefault();
+            const email = document.getElementById("email").value;
+            const senha = document.getElementById("senha").value;
+
+            try
+            {
+                const userCredential = await auth.signInWithEmailAndPassword(email, senha);
+                alert(`✅ Logado como ${userCredential.user.email}`);
+                // Redireciona para tela de escolha de time
+                window.location.href = "escolher-time.html";
+            } catch (error)
+            {
+                alert("❌ Erro ao fazer login: " + error.message);
+            }
+        });
+
+        function loginComGoogle()
+        {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider)
+                .then((result) =>
+                {
+                    alert(`✅ Bem-vindo ${result.user.displayName}`);
+                    window.location.href = "escolher-time.html";
+                })
+                .catch((error) =>
+                {
+                    alert("❌ Erro com Google: " + error.message);
+                });
+        }
+
+        function cadastrar()
+        {
+            const email = prompt("Digite seu e-mail:");
+            const senha = prompt("Crie uma senha:");
+            auth.createUserWithEmailAndPassword(email, senha)
+                .then((userCredential) =>
+                {
+                    alert("✅ Conta criada com sucesso!");
+                })
+                .catch((error) =>
+                {
+                    alert("❌ Erro ao cadastrar: " + error.message);
+                });
+        }
+    </script>
+</body>
+
+</html>

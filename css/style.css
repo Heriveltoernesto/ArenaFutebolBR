@@ -107,3 +107,111 @@ button:hover {
   font-weight: bold;
   color: #555;
 }
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+header, footer {
+  background-color: #000;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+button {
+  background-color: #0077cc;
+  color: white;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+}
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+header,
+footer {
+  background-color: #000;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+button {
+  background-color: #0077cc;
+  color: white;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+}body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+header, footer {
+  background-color: #000;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+button {
+  background-color: #0077cc;
+  color: white;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+}
+#floatingIcons {
+  position: fixed;
+  top: 40%;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 9999;
+}
+
+#floatingIcons a img {
+  width: 40px;
+  height: 40px;
+  opacity: 0.8;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+#floatingIcons a img:hover {
+  transform: scale(1.2);
+  opacity: 1;
+}

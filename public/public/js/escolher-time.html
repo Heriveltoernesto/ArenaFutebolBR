@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Escolha seu Time - Arena Futebol BR</title>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <style>
+        .escudos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .time {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .time:hover {
+            transform: scale(1.1);
+        }
+
+        img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>⚽ Escolha seu time favorito</h2>
+    <div class="escudos" id="escudosContainer">
+        <!-- Escudos aparecerão aqui -->
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyA5DIAourmLOL3fq-clZZWNaXmiE5viaxQ",
+            authDomain: "arena-futebolbr.firebaseapp.com",
+            projectId: "arena-futebolbr",
+            appId: "1:929515695163:web:239d34041a9dc25d2bc01e"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        const times = [
+            { nome: "Arsenal", escudo: "https://www.thesportsdb.com/images/media/team/badge/vrtrtp1448813175.png" },
+            { nome: "Chelsea", escudo: "https://www.thesportsdb.com/images/media/team/badge/vrqrrq1448813212.png" },
+            { nome: "Liverpool", escudo: "https://www.thesportsdb.com/images/media/team/badge/vwpvry1467462651.png" },
+            { nome: "Manchester United", escudo: "https://www.thesportsdb.com/images/media/team/badge/vrtrtp1448813200.png" },
+            { nome: "Barcelona", escudo: "https://www.thesportsdb.com/images/media/team/badge/xzqdr11517660252.png" }
+        ];
+
+        const escudosContainer = document.getElementById("escudosContainer");
+
+        times.forEach(time =>
+        {
+            const div = document.createElement("div");
+            div.className = "time";
+            div.innerHTML = `<img src="${time.escudo}" alt="${time.nome}" /><p>${time.nome}</p>`;
+            div.onclick = () => salvarTime(time);
+            escudosContainer.appendChild(div);
+        });
+
+        function salvarTime(timeEscolhido)
+        {
+            auth.onAuthStateChanged(user =>
+            {
+                if (user)
+                {
+                    db.collection("usuarios").doc(user.uid).set({
+                        timeFavorito: timeEscolhido.nome,
+                        escudo: timeEscolhido.escudo,
+                        email: user.email
+                    }).then(() =>
+                    {
+                        alert(`✅ Time ${timeEscolhido.nome} salvo com sucesso!`);
+                        window.location.href = "dashboard.html"; // próxima tela
+                    }).catch(err => alert("Erro ao salvar: " + err.message));
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

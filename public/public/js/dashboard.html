@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArenaBR - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+</head>
+
+<body class="flex bg-gray-900 text-white min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-800 p-5 space-y-6 flex flex-col">
+        <div class="text-2xl font-bold">⚽ ArenaBR</div>
+        <nav class="flex flex-col space-y-3">
+            <button onclick="mostrarPagina('dashboard')" class="text-left hover:text-yellow-400">🏠 Dashboard</button>
+            <button onclick="mostrarPagina('partidas')" class="text-left hover:text-yellow-400">📋 Partidas</button>
+            <button onclick="mostrarPagina('jogadores')" class="text-left hover:text-yellow-400">👥 Jogadores</button>
+            <button onclick="mostrarPagina('ranking')" class="text-left hover:text-yellow-400">🏆 Ranking</button>
+            <button onclick="mostrarPagina('resultados')" class="text-left hover:text-yellow-400">📊 Resultados</button>
+            <button onclick="mostrarPagina('noticias')" class="text-left hover:text-yellow-400">📰 Notícias</button>
+            <button onclick="mostrarPagina('videos')" class="text-left hover:text-yellow-400">🎥 Vídeos</button>
+            <button onclick="mostrarPagina('radio')" class="text-left hover:text-yellow-400">📻 Rádio</button>
+            <button onclick="mostrarPagina('config')" class="text-left hover:text-yellow-400">⚙️ Configurações</button>
+            <button onclick="logout()" class="text-left text-red-500 hover:underline mt-4">🚪 Sair</button>
+        </nav>
+    </aside>
+
+    <!-- Conteúdo -->
+    <main class="flex-1 p-6 space-y-10">
+        <section id="pagina-dashboard" class="pagina">
+            <h1 class="text-2xl font-bold mb-4">🏠 Dashboard</h1>
+            <img id="escudo" class="h-24 mb-2" />
+            <h2 id="nomeTime" class="text-xl font-semibold">Carregando...</h2>
+        </section>
+
+        <section id="pagina-partidas" class="pagina hidden">
+            <h1 class="text-2xl font-bold mb-4">📋 Últimos Jogos</h1>
+            <div id="ultimosJogos" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">Carregando...</div>
+        </section>
+
+        <section id="pagina-jogadores" class="pagina hidden">
+            <h1 class="text-2xl font-bold mb-4">👥 Jogadores</h1>
+            <div id="jogadores" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                Carregando...</div>
+        </section>
+
+        <section id="pagina-ranking" class="pagina hidden">
+            <h1 class="text-2xl font-bold mb-4">🏆 Ranking</h1>
+            <div id="ranking">Carregando...</div>
+        </section>
+
+        <section id="pagina-resultados" class="pagina hidden">
+            <h1 class="text-2xl font-bold mb-4">📊 Resultados</h1>
+            <div id="resultados">Carregando...</div>
+        </section>
+
+        <section id="pagina-noticias" class="pagina hidden">
+            <h1 class="text-2xl font-bold mb-4">📰 Notícias</h1>
+            <div id="noticias" class="space-y-4">Carregando...</div>
+        </section>
+
+        <section id="pagina-videos" class="pagina hidden">
+            <h1 class="text-2xl font-bold mb-4">🎥 Vídeos</h1>
+            <div id="videos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">Carregando...</div>
+        </section>
+
+        <section id="pagina-radio" class="pagina hidden">
+            <h1 class="text-2xl font-bold mb-4">📻 Rádio</h1>
+            <div id="radio">
+                <audio controls class="w-full">
+                    <source src="https://example.com/stream" type="audio/mpeg">
+                    Seu navegador não suporta o player de áudio.
+                </audio>
+            </div>
+        </section>
+
+        <section id="pagina-config" class="pagina hidden">
+            <h1 class="text-2xl font-bold mb-4">⚙️ Configurações</h1>
+            <p class="text-gray-400">(em construção...)</p>
+        </section>
+    </main>
+
+    <script>
+        function mostrarPagina(pagina)
+        {
+            document.querySelectorAll('.pagina').forEach(secao => secao.classList.add('hidden'));
+            document.getElementById(`pagina-${pagina}`).classList.remove('hidden');
+        }
+
+        function logout()
+        {
+            firebase.auth().signOut().then(() =>
+            {
+                window.location.href = "index.html";
+            });
+        }
+    </script>
+</body>
+
+</html>

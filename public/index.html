@@ -5,52 +5,51 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ARENA FUTEBOL BR</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <style>
         body {
             font-family: "Inter", sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f9f9f9;
         }
 
-        header {
-            background-color: #0077cc;
+        header,
+        footer {
+            background: #000 url('https://www.transparenttextures.com/patterns/hexellence.png');
             color: white;
             padding: 1rem;
-        }
-
-        nav button {
-            background-color: #005fa3;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        nav ul li {
-            margin: 0.5rem 0;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
+            text-align: center;
         }
 
         main {
             padding: 1rem;
         }
 
-        footer {
-            background-color: #f1f1f1;
-            padding: 1rem;
-            text-align: center;
-            font-size: 0.9rem;
+        #floatingIcons {
+            position: fixed;
+            top: 40%;
+            left: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 9999;
+        }
+
+        #floatingIcons a img {
+            width: 40px;
+            height: 40px;
+            opacity: 0.8;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        #floatingIcons a img:hover {
+            transform: scale(1.2);
+            opacity: 1;
         }
     </style>
 </head>
@@ -58,112 +57,105 @@
 <body>
     <header>
         <h1>ARENA FUTEBOL BR</h1>
-        <nav id="menu">
-            <button onclick="toggleMenu()">☰ Menu</button>
-            <ul id="menuItems" style="display: none;">
-                <li><a href="#resultados" onclick="carregarResultados()">Resultados</a></li>
-                <li><a href="#ranking" onclick="carregarRanking()">Ranking</a></li>
-                <li><a href="#palpites" onclick="carregarPalpites()">Palpites</a></li>
-                <li><a href="#videos" onclick="carregarVideos()">Vídeos</a></li>
-                <li><a href="#radios" onclick="carregarRadios()">Rádios</a></li>
-                <li><a href="#discord" onclick="carregarDiscord()">Discord</a></li>
-            </ul>
-        </nav>
     </header>
 
     <main>
-        <div>
-            <a href="#" class="_link" data-league="39">Inglaterra - Premier League</a>
-            <a href="#" class="_link" data-league="61">França - Ligue 1</a>
-            <a href="#" class="_link" data-league="78">Alemanha - Bundesliga</a>
-        </div>
-
-        <div id="wg-api-football-standings" data-host="v3.football.api-sports.io" data-key="Your-Api-Key-Here"
-            data-league="39" data-season="2022" data-theme="" data-show-errors="false" data-show-logos="true"
-            class="wg_loader">
-        </div>
-
-        <section id="resultados">
-            <h2>Resultados Recentes</h2>
-            <button id="atualizarBtn">Atualizar Resultados de Hoje</button>
-            <div id="results">Clique para carregar resultados...</div>
+        <section id="cadastro">
+            <h2>Cadastro</h2>
+            <button onclick="loginComGoogle()">Entrar com Google</button>
         </section>
 
-        <section id="ranking">
-            <h2>Ranking dos Esportes</h2>
-            <div id="rankingData">Clique para carregar ranking...</div>
-        </section>
-
-        <section id="palpites">
-            <h2>Palpites</h2>
-            <form id="palpiteForm" enctype="multipart/form-data">
-                <label for="nome">🧍 Nome:</label>
-                <input type="text" id="nome" name="nome" required>
-
-                <label for="palpite">🔮 Palpite:</label>
-                <input type="text" id="palpite" name="palpite" required>
-
-                <label for="foto">📸 Foto de Perfil:</label>
-                <input type="file" id="foto" name="foto" accept="image/*" required>
-
-                <button type="submit">🚀 Enviar Palpite</button>
-            </form>
-
-            <h3>🏆 Ranking dos Palpiteiros</h3>
-            <div id="rankingPalpites" class="ranking-palpite"></div>
-        </section>
-
-        <section id="videos">
-            <h2>Vídeos</h2>
-            <div id="videoContainer">Carregando vídeos...</div>
-        </section>
-
-        <section id="radios">
-            <h2>Rádios de Esportes</h2>
-            <div id="radioContainer">Clique para carregar rádios ao vivo</div>
+        <section id="noticias">
+            <h2>Notícias Esportivas</h2>
+            <div id="newsTicker" style="overflow: hidden; white-space: nowrap;"></div>
         </section>
 
         <section id="discord">
-            <h2>Comunidade no Discord</h2>
-            <div id="discordData">Clique para carregar o link do servidor</div>
+            <h2>Nosso Discord</h2>
+            <p>Participe da comunidade: <a href="#">Acessar servidor</a></p>
         </section>
     </main>
 
+    <div id="floatingIcons">
+        <a href="https://discord.gg/seu-link" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord" />
+        </a>
+        <a href="https://www.youtube.com/channel/SEU_CANAL" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/174/174883.png" alt="YouTube" />
+        </a>
+        <a href="https://www.radios.com.br/" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/727/727245.png" alt="Rádio" />
+        </a>
+    </div>
+
     <footer>
-        <p>© 2025 Esportes Globais. Todos os direitos reservados.</p>
+        <p>© 2025 ARENA FUTEBOL BR - Todos os direitos reservados.</p>
     </footer>
 
-    <script type="module" src="https://widgets.api-sports.io/2.0.3/widgets.js"></script>
-
     <script>
-        function toggleMenu()
+        const firebaseConfig = {
+            apiKey: "AIzaSyA5DIAourmLOL3fq-clZZWNaXmiE5viaxQ",
+            authDomain: "arena-futebolbr.firebaseapp.com",
+            projectId: "arena-futebolbr",
+            storageBucket: "arena-futebolbr.appspot.com",
+            messagingSenderId: "929515695163",
+            appId: "1:929515695163:web:239d34041a9dc25d2bc01e"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function loginComGoogle()
         {
-            const menuItems = document.getElementById("menuItems");
-            menuItems.style.display = menuItems.style.display === "none" ? "block" : "none";
+            const provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithPopup(provider)
+                .then((result) =>
+                {
+                    const user = result.user;
+                    const time = prompt("Qual seu time do coração?");
+                    salvarUsuario(user, time);
+                    alert(`Bem-vindo, ${user.displayName}!`);
+                })
+                .catch((error) =>
+                {
+                    alert("Erro ao fazer login: " + error.message);
+                });
         }
 
-        document.addEventListener('click', function (event)
+        function salvarUsuario(user, time)
         {
-            if (!event.target.matches('._link')) return;
-            event.preventDefault();
-
-            const id = event.target.getAttribute('data-league');
-            const standings = document.getElementById('wg-api-football-standings');
-
-            standings.innerHTML = '';
-            standings.setAttribute('data-league', id);
-
-            const newEvent = new Event("DOMContentLoaded", {
-                bubbles: true,
-                cancelable: true
+            db.collection("usuarios").doc(user.uid).set({
+                nome: user.displayName,
+                email: user.email,
+                timeCoracao: time,
+                criadoEm: new Date()
             });
-            document.dispatchEvent(newEvent);
-        }); 
+        }
+
+        emailjs.init("YOUR_USER_ID");
+        function enviarAlertaEmail(email, nome, time, jogo)
+        {
+            emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+                nome,
+                email,
+                time,
+                mensagem: `Seu time ${time} jogará contra ${jogo.strAwayTeam || jogo.strHomeTeam} em ${jogo.dateEvent} às ${jogo.strTime}`
+            });
+        }
+
+        async function carregarNoticias()
+        {
+            const res = await fetch("https://api.currentsapi.services/v1/latest-news?language=pt&category=sports", {
+                headers: { "Authorization": "your_currentsapi_key" }
+            });
+            const data = await res.json();
+            const ticker = document.getElementById("newsTicker");
+            ticker.innerHTML = data.news.map(n => `📰 ${n.title}`).join(" 🔹 ");
+            setInterval(() => { ticker.scrollLeft += 1; }, 30);
+        }
+
+        carregarNoticias();
     </script>
-    <!-- Certifique-se que esse caminho está correto -->
-    <script src="js/resultados.js"></script>
-
-
 </body>
 
 </html>
