@@ -1,33 +1,18 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ARENA FUTEBOL BR</title>
+    <title>Arena Futebol BR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <style>
         body {
             font-family: "Inter", sans-serif;
+            background-color: #f9f9f9;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
-        }
-
-        header,
-        footer {
-            background: #000 url('https://www.transparenttextures.com/patterns/hexellence.png');
-            color: white;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        main {
-            padding: 1rem;
         }
 
         #floatingIcons {
@@ -51,110 +36,154 @@
             transform: scale(1.2);
             opacity: 1;
         }
+
+        @keyframes scrollNews {
+            0% {
+                top: 100%;
+            }
+
+            100% {
+                top: -100%;
+            }
+        }
+
+        .animate-scrollNews {
+            animation: scrollNews 40s linear infinite;
+        }
     </style>
 </head>
 
-<body>
-    <header>
-        <h1>ARENA FUTEBOL BR</h1>
+<body class="bg-gray-100 text-white">
+    <header class="relative bg-black bg-opacity-90">
+        <div class="flex justify-between items-center p-4">
+            <h1 class="text-2xl font-bold">ARENA FUTEBOL BR</h1>
+            <div class="flex space-x-4 items-center">
+                <img src="/mnt/data/freepik__the-style-is-pixel-art-with-a-retro-8bit-pixelated__23566.png"
+                    class="w-8 h-8 mix-blend-screen grayscale opacity-50 hover:opacity-100 transition" alt="Icone" />
+                <img src="/mnt/data/freepik__the-style-is-pixel-art-with-a-retro-8bit-pixelated__23567.png"
+                    class="w-8 h-8 mix-blend-screen grayscale opacity-50 hover:opacity-100 transition" alt="Icone" />
+                <button id="menu-btn" class="text-red-600 text-3xl">&#9776;</button>
+            </div>
+        </div>
+        <div id="floatingIcons">
+            <a href="https://discord.gg/seu-link" target="_blank"><img
+                    src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord" /></a>
+            <a href="https://www.youtube.com/channel/SEU_CANAL" target="_blank"><img
+                    src="https://cdn-icons-png.flaticon.com/512/174/174883.png" alt="YouTube" /></a>
+            <a href="https://www.radios.com.br/" target="_blank"><img
+                    src="https://cdn-icons-png.flaticon.com/512/727/727245.png" alt="Radio" /></a>
+        </div>
+        <div class="absolute inset-0 opacity-10 bg-center bg-cover"
+            style="background-image: url('/mnt/data/freepik__the-style-is-pixel-art-with-a-retro-8bit-pixelated__23569.png');">
+        </div>
     </header>
 
-    <main>
-        <section id="cadastro">
-            <h2>Cadastro</h2>
-            <button onclick="loginComGoogle()">Entrar com Google</button>
-        </section>
-
-        <section id="noticias">
-            <h2>Notícias Esportivas</h2>
-            <div id="newsTicker" style="overflow: hidden; white-space: nowrap;"></div>
-        </section>
-
-        <section id="discord">
-            <h2>Nosso Discord</h2>
-            <p>Participe da comunidade: <a href="#">Acessar servidor</a></p>
-        </section>
-    </main>
-
-    <div id="floatingIcons">
-        <a href="https://discord.gg/seu-link" target="_blank">
-            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord" />
-        </a>
-        <a href="https://www.youtube.com/channel/SEU_CANAL" target="_blank">
-            <img src="https://cdn-icons-png.flaticon.com/512/174/174883.png" alt="YouTube" />
-        </a>
-        <a href="https://www.radios.com.br/" target="_blank">
-            <img src="https://cdn-icons-png.flaticon.com/512/727/727245.png" alt="Rádio" />
-        </a>
+    <div id="mobile-menu" class="hidden bg-gray-800 p-4">
+        <ul class="space-y-2">
+            <li><a href="#resultados" class="text-white">Resultados</a></li>
+            <li><a href="#ranking" class="text-white">Ranking</a></li>
+            <li><a href="#videos" class="text-white">Vídeos</a></li>
+            <li><a href="#radios" class="text-white">Rádios</a></li>
+            <li><a href="#discord" class="text-white">Discord</a></li>
+        </ul>
+    </div>
+    <div id="feedCarousel" class="relative overflow-hidden h-[400px]">
+        <div id="feedItems" class="transition-transform duration-700 ease-in-out flex w-full h-full">
+            <!-- Itens gerados aqui -->
+        </div>
     </div>
 
-    <footer>
-        <p>© 2025 ARENA FUTEBOL BR - Todos os direitos reservados.</p>
+    <!-- FEED DE NOTÍCIAS E VÍDEOS -->
+    <main class="p-6">
+        <div id="feed" class="space-y-6"></div>
+    </main>
+
+    <footer class="relative bg-black bg-opacity-90 text-center p-4 text-sm mt-8">
+        <div class="opacity-10 absolute inset-0 bg-center bg-cover"
+            style="background-image: url('/mnt/data/freepik__the-style-is-pixel-art-with-a-retro-8bit-pixelated__23568.png');">
+        </div>
+        <div class="relative z-10">© 2025 ARENA FUTEBOL BR - Todos os direitos reservados.</div>
     </footer>
 
+    <!-- SCRIPTS -->
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyA5DIAourmLOL3fq-clZZWNaXmiE5viaxQ",
-            authDomain: "arena-futebolbr.firebaseapp.com",
-            projectId: "arena-futebolbr",
-            storageBucket: "arena-futebolbr.appspot.com",
-            messagingSenderId: "929515695163",
-            appId: "1:929515695163:web:239d34041a9dc25d2bc01e"
-        };
+        const CURRENTS_API_KEY = 'ad39ee3d04fc45788c1666dee8a23767';
+        const YOUTUBE_API_KEY = 'SUA_YOUTUBE_API_KEY'; // <- Substituir
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        function loginComGoogle()
+        async function buscarNoticias()
         {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            firebase.auth().signInWithPopup(provider)
-                .then((result) =>
-                {
-                    const user = result.user;
-                    const time = prompt("Qual seu time do coração?");
-                    salvarUsuario(user, time);
-                    alert(`Bem-vindo, ${user.displayName}!`);
-                })
-                .catch((error) =>
-                {
-                    alert("Erro ao fazer login: " + error.message);
-                });
-        }
-
-        function salvarUsuario(user, time)
-        {
-            db.collection("usuarios").doc(user.uid).set({
-                nome: user.displayName,
-                email: user.email,
-                timeCoracao: time,
-                criadoEm: new Date()
-            });
-        }
-
-        emailjs.init("YOUR_USER_ID");
-        function enviarAlertaEmail(email, nome, time, jogo)
-        {
-            emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-                nome,
-                email,
-                time,
-                mensagem: `Seu time ${time} jogará contra ${jogo.strAwayTeam || jogo.strHomeTeam} em ${jogo.dateEvent} às ${jogo.strTime}`
-            });
-        }
-
-        async function carregarNoticias()
-        {
-            const res = await fetch("https://api.currentsapi.services/v1/latest-news?language=pt&category=sports", {
-                headers: { "Authorization": "your_currentsapi_key" }
+            const res = await fetch(`https://api.currentsapi.services/v1/latest-news?language=pt&category=sports`, {
+                headers: { Authorization: CURRENTS_API_KEY }
             });
             const data = await res.json();
-            const ticker = document.getElementById("newsTicker");
-            ticker.innerHTML = data.news.map(n => `📰 ${n.title}`).join(" 🔹 ");
-            setInterval(() => { ticker.scrollLeft += 1; }, 30);
+            return data.news.slice(0, 5);
         }
 
-        carregarNoticias();
+        async function buscarVideos()
+        {
+            const res = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=futebol&maxResults=5&type=video&key=${YOUTUBE_API_KEY}`);
+            const data = await res.json();
+            return data.items;
+        }
+
+        function embaralharArray(array)
+        {
+            for (let i = array.length - 1; i > 0; i--)
+            {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        async function montarFeed()
+        {
+            const noticias = await buscarNoticias();
+            const videos = await buscarVideos();
+
+            const combinados = embaralharArray([
+                ...noticias.map(n => ({ tipo: 'noticia', dados: n })),
+                ...videos.map(v => ({ tipo: 'video', dados: v }))
+            ]);
+
+            const feed = document.getElementById('feed');
+            feed.innerHTML = '';
+
+            combinados.forEach(item =>
+            {
+                if (item.tipo === 'noticia')
+                {
+                    feed.innerHTML += `
+            <div class="bg-gray-800 p-4 rounded shadow">
+              <h2 class="text-xl font-bold">${item.dados.title}</h2>
+              <p class="text-sm mt-2">${item.dados.description}</p>
+              <a href="${item.dados.url}" target="_blank" class="text-blue-400 mt-2 inline-block">Leia mais</a>
+            </div>`;
+                } else
+                {
+                    const videoId = item.dados.id.videoId;
+                    feed.innerHTML += `
+            <div class="bg-gray-800 p-4 rounded shadow">
+              <h2 class="text-xl font-bold">${item.dados.snippet.title}</h2>
+              <iframe class="w-full mt-2 rounded" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+            </div>`;
+                }
+            });
+        }
+
+        montarFeed();
+
+        // Menu toggle
+        document.getElementById('menu-btn').addEventListener('click', () =>
+        {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () =>
+        {
+            montarFeed();
+        });
     </script>
 </body>
 
