@@ -13,6 +13,7 @@ def raspagem_brasileirao(serie, ano):
         try:
             r = requests.get(url, timeout=5)
             if r.status_code != 200:
+                logging.warning(f"[{ano}] Jogo {nj} não disponível (status {r.status_code})")
                 continue
 
             soup = BeautifulSoup(r.content, 'html.parser')
@@ -24,21 +25,29 @@ def raspagem_brasileirao(serie, ano):
             captGols = soup.select('.partida-desc > span')
 
             if not all([numJogoTag, localJogo, dataJogoTag, captTimes]):
+                logging.debug(f"[{ano}] Estrutura incompleta no jogo {nj} – página: {url}")
                 continue
 
             num_jogo = int(numJogoTag.get_text().strip().replace('Jogo: ', '').split()[0])
             rodada = num_jogo // 10 if num_jogo % 10 == 0 else num_jogo // 10 + 1
             turno = 1 if num_jogo <= 190 else 2
 
-            estadio = remove_acentos(localJogo[0].get_text().split(" - ")[0].strip())
-            cidade = remove_acentos(localJogo[0].get_text().split(" - ")[1].strip())
-            uf = localJogo[0].get_text().split(" - ")[2].strip()
+            try:
+                partes_local = localJogo[0].get_text().split(" - ")
+                estadio = remove_acentos(partes_local[0].strip())
+                cidade = remove_acentos(partes_local[1].strip())
+                uf = partes_local[2].strip()
+            except IndexError:
+                logging.warning(f"[{ano}] Erro ao extrair local do jogo {nj}")
+                continue
 
             diasemana = remove_acentos(dataJogoTag[1].get_text().split(",")[0].strip())
             data_raw = dataJogoTag[1].get_text().split(",")[1].strip()
             dia, mes, ano_data = data_raw.split(" de ")
             data = dt(int(ano_data), int(retMes(mes)), int(dia)).isoformat()
+
             hora = dataJogoTag[2].get_text().strip()
+            hora = hora if ":" in hora else "A definir"
 
             m_time, m_uf = captTimes[0].get_text().split("-")
             v_time, v_uf = captTimes[1].get_text().split("-")
@@ -72,7 +81,7 @@ def raspagem_brasileirao(serie, ano):
             jogos.append(jogo)
 
         except Exception as e:
-            logging.error(f"[ERRO] Série {serie} - Jogo {nj}: {e}")
+            logging.error(f"[ERRO] Série {serie.upper()} - Jogo {nj}: {e}")
             continue
 
     logging.info(f"[FIM] Total de jogos raspados: {len(jogos)}")

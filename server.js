@@ -50,3 +50,38 @@ app.get('/api/palpites', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
+// Adiciona essa nova rota antes do app.listen()
+
+app.get('/api/jogos', (req, res) => {
+  const { competicao } = req.query;
+
+  // Aqui você pode personalizar os dados conforme a competição recebida
+  const jogos = [
+    {
+      mandante: "Flamengo",
+      visitante: "Palmeiras",
+      gols_mandante: 2,
+      gols_visitante: 1,
+      dia_semana: "Domingo",
+      data: "28/04/2025",
+      hora: "16:00",
+      estadio: "Maracanã",
+      cidade: "Rio de Janeiro",
+      uf: "RJ"
+    },
+    {
+      mandante: "Grêmio",
+      visitante: "Cruzeiro",
+      gols_mandante: null,
+      gols_visitante: null,
+      dia_semana: "Sábado",
+      data: "27/04/2025",
+      hora: "18:30",
+      estadio: "Arena do Grêmio",
+      cidade: "Porto Alegre",
+      uf: "RS"
+    }
+  ];
+
+  res.json(jogos);
+});

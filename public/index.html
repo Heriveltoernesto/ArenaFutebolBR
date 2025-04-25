@@ -4,15 +4,52 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Arena Futebol BR - Jogos</title>
+    <title>Arena Futebol BR</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 
 <body class="bg-gray-100 text-gray-900">
 
-    <div class="container mx-auto p-6">
-        <h1 class="text-2xl font-bold mb-4">Resultados dos Jogos</h1>
+    <!-- Cabeçalho -->
+    <header class="bg-black text-yellow-400 p-4 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <i class="fas fa-futbol text-2xl"></i>
+            <span class="text-xl font-bold">Arena Futebol BR</span>
+        </div>
+        <button id="menu-toggle" class="text-yellow-400 text-2xl focus:outline-none">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
 
+    <!-- Menu Oculto -->
+    <nav id="menu" class="hidden fixed top-0 left-0 w-64 h-full bg-red-700 text-yellow-400 p-6 z-50">
+        <button id="menu-close" class="text-yellow-400 text-2xl mb-4 focus:outline-none">
+            <i class="fas fa-times"></i>
+        </button>
+        <ul class="space-y-4">
+            <li><a href="#" class="flex items-center gap-2"><i class="fas fa-home"></i> Início</a></li>
+            <li><a href="#" class="flex items-center gap-2"><i class="fas fa-newspaper"></i> Notícias</a></li>
+            <li><a href="#" class="flex items-center gap-2"><i class="fas fa-futbol"></i> Resultados</a></li>
+            <li><a href="#" class="flex items-center gap-2"><i class="fab fa-youtube"></i> YouTube</a></li>
+            <li><a href="#" class="flex items-center gap-2"><i class="fas fa-broadcast-tower"></i> Rádios</a></li>
+            <li><a href="#" class="flex items-center gap-2"><i class="fas fa-info-circle"></i> Sobre o Site</a></li>
+            <li><a href="#" class="flex items-center gap-2"><i class="fas fa-envelope"></i> Contato</a></li>
+            <li><a href="#" class="flex items-center gap-2"><i class="fab fa-discord"></i> Discord</a></li>
+        </ul>
+    </nav>
+
+    <!-- Seção de Notícias -->
+    <section class="p-6">
+        <h2 class="text-2xl font-bold mb-4">Notícias</h2>
+        <div id="noticia-container" class="bg-white p-4 rounded shadow">
+            <p id="noticia-texto" class="text-gray-700">Carregando notícias...</p>
+        </div>
+    </section>
+
+    <!-- Seção de Resultados -->
+    <section class="p-6">
+        <h2 class="text-2xl font-bold mb-4">Resultados dos Jogos</h2>
         <div class="flex gap-4 mb-6">
             <button onclick="carregarJogos('serie-a')"
                 class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Série A</button>
@@ -21,54 +58,90 @@
             <button onclick="carregarJogos('copa-do-brasil')"
                 class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded">Copa do Brasil</button>
         </div>
+        <div id="jogos-container" class="grid gap-4"></div>
+    </section>
 
-        <section id="resultados">
-            <div id="jogos-container" class="grid gap-4"></div>
-        </section>
-    </div>
+    <!-- Rodapé -->
+    <footer class="bg-black text-yellow-400 p-4 flex items-center justify-center">
+        <div class="flex items-center gap-4">
+            <i class="fas fa-futbol text-xl"></i>
+            <i class="fab fa-youtube text-xl"></i>
+            <i class="fas fa-broadcast-tower text-xl"></i>
+            <i class="fab fa-discord text-xl"></i>
+        </div>
+    </footer>
 
+    <!-- Script Interno: Menu e Notícias -->
     <script>
-        async function carregarJogos(competicao)
+        // Menu Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const menuClose = document.getElementById('menu-close');
+        const menu = document.getElementById('menu');
+
+        menuToggle.addEventListener('click', () =>
         {
-            const container = document.getElementById('jogos-container');
-            container.innerHTML = "<p class='text-gray-500'>Carregando...</p>";
+            menu.classList.remove('hidden');
+        });
 
-            let url = '';
-            const ano = new Date().getFullYear();
+        menuClose.addEventListener('click', () =>
+        {
+            menu.classList.add('hidden');
+        });
 
-            if (competicao === 'copa-do-brasil')
-            {
-                url = `http://localhost:5000/api/jogos/copa-do-brasil?ano=${ano}`;
-            } else
-            {
-                url = `http://localhost:5000/api/jogos?competicao=${competicao}&ano=${ano}`;
-            }
+        // Notícias com Imagem e Texto
+    const noticias = [
+        {
+            titulo: "CBF anuncia novo calendário para o Brasileirão 2025.",
+            imagem: "https://placehold.co/400x200?text=Brasileirao+2025"
+        },
+        {
+            titulo: "Conmebol divulga tabela da Copa Libertadores.",
+            imagem: "https://placehold.co/400x200?text=Libertadores"
+        },
+        {
+            titulo: "Seleção Brasileira se prepara para amistosos internacionais.",
+            imagem: "https://placehold.co/400x200?text=Selecao+Brasileira"
+        },
+        {
+            titulo: "CBF e Conmebol discutem medidas contra o racismo no futebol.",
+            imagem: "https://placehold.co/400x200?text=Racismo+No+Futebol"
+        }
+    ];
 
-            try
-            {
-                const res = await fetch(url);
-                const jogos = await res.json();
+    let noticiaAtual = 0;
 
-                if (!jogos.length)
-                {
-                    container.innerHTML = "<p class='text-red-500'>Nenhum jogo encontrado.</p>";
-                    return;
-                }
+    function exibirNoticia()
+    {
+        const container = document.getElementById("noticia-container");
+        const noticia = noticias[noticiaAtual];
 
-                container.innerHTML = jogos.map(jogo => `
-          <div class="bg-white p-4 rounded shadow">
-            <p class="font-bold">${jogo.mandante} ${jogo.placar} ${jogo.visitante}</p>
-            <p class="text-sm text-gray-600">${jogo.data} às ${jogo.hora} - ${jogo.estadio}, ${jogo.cidade}/${jogo.uf}</p>
-          </div>
-        `).join('');
-            } catch (e)
-            {
-                container.innerHTML = "<p class='text-red-600'>Erro ao carregar jogos.</p>";
-                console.error(e);
-            }
-        };
-<script src="script.js"></script>
- 
-</script>
+        container.innerHTML = `
+    <img src="${noticia.imagem}" alt="Notícia" class="rounded mb-2 w-full">
+    <p id="noticia-texto" class="text-gray-700">${noticia.titulo}</p>
+  `;
+
+        noticiaAtual = (noticiaAtual + 1) % noticias.length;
+    }
+
+    exibirNoticia();
+        {
+            const container = document.getElementById('noticia-container');
+            const noticia = noticias[noticiaAtual];
+            container.innerHTML = `
+                <img src="${noticia.imagem}" alt="${noticia.titulo}" class="rounded mb-4 shadow" />
+                <h3 class="text-xl font-semibold mb-2">${noticia.titulo}</h3>
+                <p class="text-gray-700">${noticia.texto}</p>
+            `;
+
+            noticiaAtual = (noticiaAtual + 1) % noticias.length;
+        }
+
+        exibirNoticia();
+        setInterval(exibirNoticia, 7000);
+    </script>
+
+    <!-- Script Externo -->
+    <script src="public/js/meuscript.js" defer></script>
 </body>
+
 </html>

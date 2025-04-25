@@ -1,26 +1,21 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/api/jogos')
-def jogos():
-    competicao = request.args.get('competicao')
-    ano = request.args.get('ano')
-    # Aqui você pode integrar seu scraper ou banco de dados
-    return jsonify([
-        {
-            "mandante": "Flamengo",
-            "visitante": "Palmeiras",
-            "placar": "2x1",
-            "data": "2025-04-27",
-            "hora": "16:00",
-            "estadio": "Maracanã",
-            "cidade": "Rio de Janeiro",
-            "uf": "RJ"
-        }
-    ])
+# Simulação de base de dados
+jogos_fake = {
+    "serie-a": [
+        {"time_casa": "Flamengo", "time_fora": "Palmeiras", "data": "2024-05-01"},
+        {"time_casa": "Corinthians", "time_fora": "Grêmio", "data": "2024-05-02"}
+    ],
+    "serie-b": [
+        {"time_casa": "Vasco", "time_fora": "Cruzeiro", "data": "2024-05-03"}
+    ]
+}
 
-if __name__ == '__main__':
-    app.run()
+@app.route('/api/jogos', methods=['GET'])
+def get_jogos():
+    competicao = request.args.get('competicao')
+    ano = request

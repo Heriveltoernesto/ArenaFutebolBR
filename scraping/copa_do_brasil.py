@@ -12,11 +12,15 @@ def coletar_jogos_copa_do_brasil(ano):
     try:
         r = requests.get(base_url, timeout=5)
         if r.status_code != 200:
-            logging.warning(f"[AVISO] Não foi possível acessar a página da Copa do Brasil ({ano})")
+            logging.warning(f"[AVISO] Não foi possível acessar a página da Copa do Brasil ({ano}) - Status: {r.status_code}")
             return jogos
 
         soup = BeautifulSoup(r.content, "html.parser")
         partidas = soup.select(".aside-content .lista-de-jogos li")
+
+        if not partidas:
+            logging.warning(f"[AVISO] Nenhum jogo encontrado na página da Copa do Brasil para o ano {ano}")
+            return jogos
 
         for partida in partidas:
             try:
@@ -28,6 +32,10 @@ def coletar_jogos_copa_do_brasil(ano):
                 hora = partida.select_one(".partida-desc .hora").get_text().strip()
                 times = partida.select(".partida-desc h3")
                 placar_info = partida.select(".partida-desc span")
+
+                if len(times) < 2:
+                    logging.warning(f"[AVISO] Não foi possível extrair os times de uma partida. Ignorando jogo.")
+                    continue
 
                 m_time = remove_acentos(times[0].get_text().strip())
                 v_time = remove_acentos(times[1].get_text().strip())

@@ -12,24 +12,29 @@ def coletar_jogos_libertadores(ano):
     try:
         r = requests.get(base_url, timeout=5)
         if r.status_code != 200:
-            logging.warning(f"[AVISO] Não foi possível acessar a tabela da Libertadores ({ano})")
+            logging.warning(f"[AVISO] Não foi possível acessar a tabela da Libertadores ({ano}) - Status: {r.status_code}")
             return jogos
 
         soup = BeautifulSoup(r.content, "html.parser")
         partidas = soup.select("div.placar-wrapper")
 
+        if not partidas:
+            logging.warning(f"[AVISO] Nenhuma partida encontrada na tabela da Libertadores para o ano {ano}")
+            return jogos
+
         for partida in partidas:
             try:
                 data_attr = partida.get("data-event-date")
                 if not data_attr:
+                    logging.warning("[AVISO] Não foi encontrada data para uma partida. Ignorando jogo.")
                     continue
                 data = dt.fromisoformat(data_attr.split("T")[0]).isoformat()
 
-                m_time = remove_acentos(partida.select_one(".equipes .mandante .nome").get_text())
-                v_time = remove_acentos(partida.select_one(".equipes .visitante .nome").get_text())
+                m_time = remove_acentos(partida.select_one(".equipes .mandante .nome").get_text().strip())
+                v_time = remove_acentos(partida.select_one(".equipes .visitante .nome").get_text().strip())
 
-                gols_m = int(partida.select_one(".placar-mandante").get_text())
-                gols_v = int(partida.select_one(".placar-visitante").get_text())
+                gols_m = int(partida.select_one(".placar-mandante").get_text().strip())
+                gols_v = int(partida.select_one(".placar-visitante").get_text().strip())
                 total = gols_m + gols_v
 
                 if gols_m > gols_v:

@@ -14,4 +14,3 @@ document.addEventListener("DOMContentLoaded", () => {
       `).join('');
     })
     .catch(err => console.error("Erro:", err));
-});
