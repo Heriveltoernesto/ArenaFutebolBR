@@ -1,7 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("/api/resultados")
-    .then(res => res.json())
-    .then(dados => {
+   fetch('http://localhost:5000/api/jogos?competicao=serie-a&ano=2025')
+  .then(res => res.json())
+  .then(data => {
+    console.log(data); // Mostra no console
+    // Aqui você pode popular a página
+  });
       const container = document.getElementById("results");
       container.innerHTML = dados.map(jogo => `
         <div class="placar-card">
